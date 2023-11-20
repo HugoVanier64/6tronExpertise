@@ -9,9 +9,8 @@ namespace {
 Ticker flipper;
 InterruptIn boutonPin(BUTTON1);  // Numéro de la broche du bouton
 DigitalOut ledPin(LED1);   // Numéro de la broche de la LED 
+float freq = 5.0;
 }
-
-
 
 void flip()
 {
@@ -19,12 +18,34 @@ void flip()
 	
 }
 
+void flipBouton1()
+{
+    freq++;
+}
+
+void flipBouton2()
+{
+	if(freq >= 20.0){
+		freq = 5.0;
+		flipper.attach(&flip, freq); 
+	}
+	else{
+		flipper.attach(&flip, freq);
+	}
+	
+}
+
+
+
 int main()
 {
 	ledPin = 1;
-	flipper.attach(&flip, 1.0); 
+	boutonPin.rise(&flipBouton1);
+	boutonPin.fall(&flipBouton2);
+	flipper.attach(&flip, freq); 
 	while (true) {
 		
+		printf("The actual frequence is %f seconds\n", freq);
 		ThisThread::sleep_for(PERIOD_MS / 4);
 	}
 }
