@@ -6,32 +6,25 @@
 using namespace std::chrono;
 namespace {
 #define PERIOD_MS 1000ms
+Ticker flipper;
 InterruptIn boutonPin(BUTTON1);  // Numéro de la broche du bouton
 DigitalOut ledPin(LED1);   // Numéro de la broche de la LED 
-Timer t;
 }
 
 
 
-void flipAllumage()
+void flip()
 {
-    ledPin = 1;
-	t.start();
-}
-
-void flipEteindre()
-{
-    ledPin = 0;
-	t.stop();
+    ledPin = !ledPin;
+	
 }
 
 int main()
 {
-	boutonPin.rise(&flipAllumage);
-	boutonPin.fall(&flipEteindre);
+	ledPin = 1;
+	flipper.attach(&flip, 1.0); 
 	while (true) {
 		
-		 printf("The time taken was %llu milliseconds\n", duration_cast<milliseconds>(t.elapsed_time()).count());
-		ThisThread::sleep_for(PERIOD_MS / 8);
+		ThisThread::sleep_for(PERIOD_MS / 4);
 	}
 }
